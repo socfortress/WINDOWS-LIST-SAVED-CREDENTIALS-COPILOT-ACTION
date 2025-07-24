@@ -36,6 +36,17 @@ function Rotate-Log {
 }
 
 Rotate-Log
+
+try {
+  if (Test-Path $ARLog) {
+    Remove-Item -Path $ARLog -Force -ErrorAction Stop
+  }
+  New-Item -Path $ARLog -ItemType File -Force | Out-Null
+  Write-Log "Active response log cleared for fresh run."
+} catch {
+  Write-Log "Failed to clear ${ARLog}: $($_.Exception.Message)" 'WARN'
+}
+
 $Start = Get-Date
 Write-Log "=== SCRIPT START : Scan Windows Credential Manager ==="
 
@@ -47,7 +58,7 @@ try {
       $target = $Matches[1].Trim()
       Write-Log "Found generic credential: $target"
       $Creds += [PSCustomObject]@{
-        type   = "Generic"
+        type = "Generic"
         target = $target
         source = "cmdkey"
         flagged_reasons = @()
@@ -60,7 +71,7 @@ try {
       $vault = $Matches[1].Trim()
       Write-Log "Found vault entry: $vault"
       $Creds += [PSCustomObject]@{
-        type   = "Vault"
+        type = "Vault"
         target = $vault
         source = "vaultcmd"
         flagged_reasons = @()
@@ -84,40 +95,38 @@ try {
   }
   $timestamp = (Get-Date).ToString('o')
   $FullReport = @{
-    host               = $HostName
-    timestamp          = $timestamp
-    action             = "scan_saved_credentials"
-    credential_count   = $Creds.Count
-    credentials        = $Creds
+    host = $HostName
+    timestamp = $timestamp
+    action = "scan_saved_credentials"
+    credential_count = $Creds.Count
+    credentials = $Creds
   }
   $FlaggedReport = @{
-    host               = $HostName
-    timestamp          = $timestamp
-    action             = "scan_saved_credentials_flagged"
-    flagged_count      = ($Creds | Where-Object { $_.flagged_reasons.Count -gt 0 }).Count
+    host = $HostName
+    timestamp = $timestamp
+    action = "scan_saved_credentials_flagged"
+    flagged_count = ($Creds | Where-Object { $_.flagged_reasons.Count -gt 0 }).Count
     flagged_credentials = $Creds | Where-Object { $_.flagged_reasons.Count -gt 0 }
   }
   $FullReport   | ConvertTo-Json -Depth 5 -Compress | Out-File -FilePath $ARLog -Append -Encoding ascii -Width 2000
   $FlaggedReport| ConvertTo-Json -Depth 5 -Compress | Out-File -FilePath $ARLog -Append -Encoding ascii -Width 2000
-  Write-Log "JSON reports (full + flagged) appended to $ARLog"
+  Write-Log "JSON reports (full + flagged) written to $ARLog"
   Write-Host "`n=== Saved Credential Report ==="
   Write-Host "Host: $HostName"
   Write-Host "Total Credentials Found: $($Creds.Count)"
   Write-Host "Flagged Credentials: $($FlaggedReport.flagged_count)`n"
   $Creds | Select-Object type,target,source | Format-Table -AutoSize
-}
-catch {
+} catch {
   Write-Log $_.Exception.Message 'ERROR'
   $errorLog = [pscustomobject]@{
     timestamp = (Get-Date).ToString('o')
-    host      = $HostName
-    action    = "scan_saved_credentials_error"
-    status    = "error"
-    error     = $_.Exception.Message
+    host = $HostName
+    action = "scan_saved_credentials_error"
+    status = "error"
+    error = $_.Exception.Message
   }
   $errorLog | ConvertTo-Json -Compress | Out-File -FilePath $ARLog -Append -Encoding ascii -Width 2000
-}
-finally {
+} finally {
   $dur = [int]((Get-Date) - $Start).TotalSeconds
   Write-Log "=== SCRIPT END : duration ${dur}s ==="
 }
