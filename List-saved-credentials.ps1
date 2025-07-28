@@ -100,6 +100,7 @@ try {
     action = "scan_saved_credentials"
     credential_count = $Creds.Count
     credentials = $Creds
+    copilot_soar = $true
   }
   $FlaggedReport = @{
     host = $HostName
