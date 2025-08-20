@@ -100,7 +100,7 @@ try {
     action = "scan_saved_credentials"
     credential_count = $Creds.Count
     credentials = $Creds
-    copilot_soar = $true
+    copilot_action = $true
   }
   $FlaggedReport = @{
     host = $HostName
@@ -108,6 +108,7 @@ try {
     action = "scan_saved_credentials_flagged"
     flagged_count = ($Creds | Where-Object { $_.flagged_reasons.Count -gt 0 }).Count
     flagged_credentials = $Creds | Where-Object { $_.flagged_reasons.Count -gt 0 }
+    copilot_action = $true
   }
   $FullReport   | ConvertTo-Json -Depth 5 -Compress | Out-File -FilePath $ARLog -Append -Encoding ascii -Width 2000
   $FlaggedReport| ConvertTo-Json -Depth 5 -Compress | Out-File -FilePath $ARLog -Append -Encoding ascii -Width 2000
@@ -125,9 +126,11 @@ try {
     action = "scan_saved_credentials_error"
     status = "error"
     error = $_.Exception.Message
+    copilot_action = $true
   }
   $errorLog | ConvertTo-Json -Compress | Out-File -FilePath $ARLog -Append -Encoding ascii -Width 2000
 } finally {
   $dur = [int]((Get-Date) - $Start).TotalSeconds
   Write-Log "=== SCRIPT END : duration ${dur}s ==="
 }
+
