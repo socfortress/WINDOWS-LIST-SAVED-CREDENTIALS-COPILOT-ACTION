@@ -1,5 +1,5 @@
 {
-  "copilot_action_name": "WINDOWS-LIST-SAVED-CREDENTIALS-ACTIVERESPONSE",
+  "copilot_action_name": "WINDOWS-LIST-SAVED-CREDENTIALS-COPILOT-ACTION",
   "description": "Enumerates saved credentials via cmdkey and vaultcmd, consolidates Generic and Windows Vault entries, and flags Microsoft/Windows accounts, Git/GitHub credentials, and any Vault-stored secrets. Outputs NDJSON (summary + per-credential) and writes atomically to the Active Response log with .new fallback.",
   "technology": "Windows",
   "icon": "windows",
