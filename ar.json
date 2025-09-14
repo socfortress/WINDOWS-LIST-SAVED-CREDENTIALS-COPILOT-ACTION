@@ -3,7 +3,7 @@
   "description": "Enumerates saved credentials using cmdkey and vaultcmd, normalizes results across Generic and Windows Vault entries, flags high-interest items (e.g., Microsoft/Windows accounts and Git/GitHub targets), and emits NDJSON with a verification record, per-credential entries, and a run summary.",
   "technology": "Windows",
   "icon": "windows",
-  "repo_url": "https://raw.githubusercontent.com/socfortress/WINDOWS-LIST-SAVED-CREDENTIALS-COPILOT-ACTION/refs/heads/main/List-Saved-Credentials.ps1",
+  "repo_url": "https://raw.githubusercontent.com/socfortress/WINDOWS-LIST-SAVED-CREDENTIALS-COPILOT-ACTION/refs/heads/main/List-saved-credentials.ps1",
   "script_name": "List-Saved-Credentials.ps1",
   "version": "1.0.0",
   "last_updated": "2025-09-09T00:00:00Z"
