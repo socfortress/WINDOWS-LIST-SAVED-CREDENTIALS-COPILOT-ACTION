@@ -67,7 +67,7 @@ try {
     if ($cmdOutput) {
       $foundCmdKey = $true
       foreach ($line in $cmdOutput) {
-        if ($line -match 'Target:\s*(.+)$') {
+        if ($line -match '^\s*(?:Target|Destino):\s*(.+)$') {
           $target = $Matches[1].Trim()
           Write-Log "Found generic credential: $target"
           $creds += [pscustomobject]@{ type='Generic'; target=$target; source='cmdkey'; flagged_reasons=@() }
@@ -85,7 +85,7 @@ try {
     if ($vaultOutput) {
       $foundVault = $true
       foreach ($line in $vaultOutput) {
-        if ($line -match 'Vault:\s*(.+)$') {
+        if ($line -match '^\s*(?:Vault|Almac.n):\s*(.+)$') {
           $vault = $Matches[1].Trim()
           Write-Log "Found vault entry: $vault"
           $creds += [pscustomobject]@{ type='Vault'; target=$vault; source='vaultcmd'; flagged_reasons=@() }
